@@ -21,16 +21,18 @@ class WelcomeTemplate:
     discussion = 'email_templates/welcome-discussionlist.md'
     private    = 'email_templates/welcome-privatelist.md'
 
+    def renderTemplate( type, project ):
+        template_file = open(eval('WelcomeTemplate.'+type), 'r')
+        ret = Liquid(template_file.read()).render(**project)
+        output_file = open("welcome-"+project['project']['mailing_lists'][type]+".txt","w")
+        output_file.write(ret)
+        output_file.close()
+        print("Created "+output_file.name)
+
+
 parser = ArgumentParser()
 parser.add_argument("-c", "--config", dest="configfile", default="project.yaml", help="name of YAML config file (defaults to project.yaml)")
 args = parser.parse_args()
-
-def renderTemplate( type, project ):
-    template_file = open(eval('WelcomeTemplate.'+type), 'r')
-    ret = Liquid(template_file.read()).render(**project)
-    output_file = open("welcome-"+project['project']['mailing_lists'][type]+".txt","w")
-    output_file.write(ret)
-    output_file.close()
 
 try:
     with open(args.configfile, 'r') as stream:
@@ -40,4 +42,5 @@ except:
 
 # determine the welcome emails to render
 for emaillist in project['project']['mailing_lists']:
-    renderTemplate( emaillist, project)
+    if not project['project']['mailing_lists'][emaillist] == 'nil':
+        WelcomeTemplate.renderTemplate(emaillist, project)
