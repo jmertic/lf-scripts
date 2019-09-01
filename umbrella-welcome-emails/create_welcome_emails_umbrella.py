@@ -15,14 +15,14 @@ import yaml
 import sys
 
 # statics for template file paths
-class WelcomeTemplate:
+class UmbrellaWelcomeTemplate:
     dev        = 'email_templates/welcome-devlist.md'
     user       = 'email_templates/welcome-userlist.md'
     discussion = 'email_templates/welcome-discussionlist.md'
     private    = 'email_templates/welcome-privatelist.md'
 
     def renderTemplate( type, project ):
-        template_file = open(eval('WelcomeTemplate.'+type), 'r')
+        template_file = open(eval('UmbrellaWelcomeTemplate.'+type), 'r')
         ret = Liquid(template_file.read()).render(**project)
         output_file = open("welcome-"+project['project']['mailing_lists'][type]+".txt","w")
         output_file.write(ret)
@@ -43,4 +43,4 @@ except:
 # determine the welcome emails to render
 for emaillist in project['project']['mailing_lists']:
     if not project['project']['mailing_lists'][emaillist] == 'nil':
-        WelcomeTemplate.renderTemplate(emaillist, project)
+        UmbrellaWelcomeTemplate.renderTemplate(emaillist, project)
